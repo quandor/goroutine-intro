@@ -8,10 +8,11 @@ import (
     "path/filepath"
 )
 
-type repoStats struct {
+type readmeStats struct {
     name string
     format string
     size int64
+    url string
 }
 
 type format struct {
@@ -40,9 +41,8 @@ func downloadReadMe(repoName string) io.ReadCloser {
     return resp.Body
 }
 
-// We might want to introduce a master/main branch check possibility
-func checkRepoFor(repoName string, format *format) *repoStats {
-    repoUrl := fmt.Sprintf("https://raw.githubusercontent.com/NovatecConsulting/%v/master/README.%v", repoName, format.fileEnding)
+func checkRepoFor(repoName string, branchName string, format *format) *readmeStats {
+    repoUrl := fmt.Sprintf("https://raw.githubusercontent.com/NovatecConsulting/%v/%v/README.%v", repoName, branchName, format.fileEnding)
     resp, err := http.Get(repoUrl)
     check(err)
 
@@ -57,12 +57,27 @@ func checkRepoFor(repoName string, format *format) *repoStats {
             check(err)
             size = int64(len(bytes))
         }
-        stat := repoStats{repoName, format.name, size}
+        stat := readmeStats{repoName, format.name, size, repoUrl}
         return &stat
     } else {
-    //    fmt.Println("Unable to find a read me at", repoUrl)
         return nil
     }
+}
+
+func getRepoStats(repoName string) *readmeStats {
+
+    markdown := format { "markdown", "md" }
+    asciidoc := format { "asciidoc", "adoc" }
+    formats := [2]format { markdown, asciidoc }
+    for _, branchName := range [2]string { "master", "main" } {
+        for _, format := range formats {
+            stats := checkRepoFor(repoName, branchName, &format)
+            if(stats != nil) {
+                return stats
+            }
+       }
+   }
+   return nil
 }
 
 func main() {
@@ -70,16 +85,13 @@ func main() {
     if (len(arguments) == 0) {
         return
     }
-    markdown := format { "markdown", "md" }
-    asciidoc := format { "asciidoc", "adoc" }
-    formats := [2]format { markdown, asciidoc }
     for _, argument := range arguments {
         fmt.Println("Checking repository named " + argument)
-        for _, format := range formats {
-            stats :=checkRepoFor(argument, &format)
-            if(stats != nil) {
-                fmt.Println(stats.name, stats.format, stats.size)
-            }
+        stats := getRepoStats(argument)
+        if(stats != nil) {
+            fmt.Printf("Readme found for %v of type %v with size %v at %v\n", stats.name, stats.format, stats.size, stats.url)
+        } else {
+            fmt.Println("No reamdme found for " + argument)
         }
     }
 }
