@@ -14,6 +14,8 @@
 * Channels
 * Select
 * Timers, Tickers
+## Sublte Problems
+http://www.sarathlakshman.com/2016/06/15/pitfall-of-golang-scheduler
 ## Differences to coroutines
 * Structered concurrency??
 * there is no launch and async in go. there is just a launch
