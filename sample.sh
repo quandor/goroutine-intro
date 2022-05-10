@@ -1,5 +1,5 @@
 #!/bin/sh
-go run goroutine-downloader.go promregator \
+go run goroutine-intro.go promregator \
     camunda-process-instance-migrator \
     event-sourcing-with-axon \
     camunda-bpmn-documentation-generator \
