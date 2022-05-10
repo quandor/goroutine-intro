@@ -1,5 +1,7 @@
 #!/bin/sh
-go run goroutine-intro.go promregator \
+go run goroutine-intro.go \
+    "$@" \
+    promregator \
     camunda-process-instance-migrator \
     event-sourcing-with-axon \
     camunda-bpmn-documentation-generator \
@@ -12,5 +14,12 @@ go run goroutine-intro.go promregator \
     demo-executionlisteners \
     grafana-api-go-sdk \
     grafana-ldap-sync-script \
-    bpm-hackathon-2019
+    bpm-hackathon-2019 \
+    MarioAI \
+    frauas-kafka-exercises \
+    technologyconsulting-cpj-infrastructure \
+    cop-frontend-coding-challenge \
+    grafana_api \
+    reactoring-kata \
+    tc-kafka-service-mesh 
 

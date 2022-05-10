@@ -5,7 +5,7 @@ import (
     "io"
     "net/http"
     "os"
-    "path/filepath"
+    "sync"
 )
 
 
@@ -32,7 +32,7 @@ func checkRepoFor(repoName string, branchName string, format *format) *readmeSta
     }
 }
 
-func getRepoStats(repoName string) *readmeStats {
+func getRepoStats(repoName string) readmeStats {
 
     markdown := format { "markdown", "md" }
     asciidoc := format { "asciidoc", "adoc" }
@@ -41,47 +41,72 @@ func getRepoStats(repoName string) *readmeStats {
         for _, format := range formats {
             stats := checkRepoFor(repoName, branchName, &format)
             if(stats != nil) {
-                return stats
+                return *stats
             }
        }
    }
-   return nil
+   return readmeStats{repoName, "", 0, ""}
 }
+
+func printRepoStat(repoName string) {
+    fmt.Println("Checking repository named " + repoName)
+    stats := getRepoStats(repoName)
+    fmt.Printf("Quality for %v is %v\n", stats.name, determineQuality(stats))
+}
+
+func determineQuality(stats readmeStats) string {
+    if (stats.size > 3000) {
+        return "Impressive"
+    } else if(stats.size > 2000) {
+        return "Fantastic"
+    } else if (stats.size > 1000) {
+        return "Excellent"
+    } else if (stats.size > 500) {
+        return "Great"
+    } else if (stats.size > 0) {
+        return "Good"
+    } else {
+        return "Standard"
+    }
+}
+
 
 func main() {
     arguments := os.Args[1:]
     if (len(arguments) == 0) {
         return
     }
-    for _, argument := range arguments {
-        fmt.Println("Checking repository named " + argument)
-        stats := getRepoStats(argument)
-        if(stats != nil) {
-            fmt.Printf("Readme found for %v of type %v with size %v at %v\n", stats.name, stats.format, stats.size, stats.url)
+
+    isConcurrent := arguments[0] == "--concurrent"
+    
+    var repoNames []string
+    var wg sync.WaitGroup
+    if(isConcurrent) {
+        repoNames = arguments[1:]
+    } else {
+        repoNames = arguments
+    }
+
+    for _, repoName := range repoNames {
+        if(isConcurrent) {
+            wg.Add(1)
+            // new variable necessary. otherwise we just print the stat
+            // for the first repo
+            repoName := repoName
+            go func () {
+                defer wg.Done()
+                printRepoStat(repoName)
+            } ()
         } else {
-            fmt.Println("No reamdme found for " + argument)
+            printRepoStat(repoName)
         }
+    }
+
+    if(isConcurrent) {
+        wg.Wait()
     }
 }
 
-func main_download() {
-    arguments := os.Args[1:]
-    if (len(arguments) == 0) {
-        return
-    }
-    dirName, err := os.MkdirTemp("", "goroutine-downloader-")
-    check(err)
-    fmt.Println("Storing results in ", dirName)
-    for _, argument := range arguments {
-        absoluteFilePath := filepath.Join(dirName, argument)
-        file, err2 := os.Create(absoluteFilePath)
-        check(err2)
-        defer file.Close()
-        content := downloadReadMe(argument)
-        defer content.Close()
-        writeToFile(file, content)
-    }
-}
 type readmeStats struct {
     name string
     format string
@@ -101,16 +126,3 @@ func check(e error) {
     }
 }
 
-func writeToFile(file *os.File, content io.Reader) {
-    fmt.Println("Writing to file:", file.Name())
-    _, err := io.Copy(file, content)
-    check(err)
-}
-
-func downloadReadMe(repoName string) io.ReadCloser {
-    repoUrl := fmt.Sprintf("https://raw.githubusercontent.com/NovatecConsulting/%v/master/README.md", repoName)
-    resp, err := http.Get(repoUrl)
-    check(err)
-
-    return resp.Body
-}
