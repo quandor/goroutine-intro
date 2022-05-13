@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>GoroutIntro</title>
+
+		<link rel="stylesheet" href="reveal.js/dist/reset.css">
+		<link rel="stylesheet" href="reveal.js/dist/reveal.css">
+		<link rel="stylesheet" href="reveal.js/dist/theme/moon.css">
+	</head>
+	<body>
+        <div class="reveal">
+            <div class="slides">
+
+                <section>
+                    <h2>GoroutIntro</h2>
+                    <p>A poor man's introduction to goroutines</p>
+                </section>
+
+                <section>
+                    <h2>Agenda</h2>
+                    <ul>
+                        <li class="fragment">Rationale</li>
+                        <li class="fragment">Syntax</li>
+                        <li class="fragment">Usecases</li>
+                        <li class="fragment">Sample code</li>
+                        <li class="fragment">Comparision with Kotlin's coroutines</li>
+                    </ul>
+                </section>
+
+                <section> 
+                    <h2>Why goroutines?</h2>
+                    <ul>
+                        <li>Concurrency for the go eco system</li>
+                        <li>Easy for Developer to</li>
+                        <li>Solve C10K problem</li>
+                    </ul>   
+                </section>
+
+                <section> 
+                    <h2>What does that look like?</h2>
+                    <p>You call a regular function, but prepend a
+                    <code>go</code>
+                    </p> 
+                    <pre class="fragment"><code data-trim>
+                         func f(s string){
+                           ... 
+                         }
+
+                         func main() {
+                           f("standard")
+                           go f("goroutine")
+                         }
+                     </code></pre>
+                </section>
+
+                <section>
+                    <h2>Usecases Go standard library</h2>
+                    <ul>
+                        <li class="fragment">Timers (an action once in the
+                            future)</li>
+                        <li class="fragment">Tickers (action repeated at an
+                            regular interval)</li>
+                        <li class="fragment">Asynchronous code (duh!)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Sample for Timers</h2>
+                </section>
+
+                <section>
+                    <h2>Sample for Tickers<</h2>
+                </section>
+
+                <section>
+                    <h2>Any limitations?</h2>
+                    <ul>
+                        <li class="fragment">Upper limit for parallel number of goroutines</li>
+                        <li class="fragment">Caller can't get return value</li>
+                    </ul>
+                    <pre class="fragment"><code data-trim> 
+                         func f(s string) string {
+                            ...
+                         }
+
+                         func main() {
+                           // value := go f("goroutine") does not work
+                           go f("goroutine")
+                         }
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>How do goroutines communicate?</h2>
+                    <ul>
+                        <li>Wait-/ErrGroups (we will have an example for that)</li>
+                        <li>Select</li>
+                        <li>Channels</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>WaitGroup sample</h2>
+                    <ul>
+                        <li>Analyze quality of Novatec's documentation of its
+                        GitHub projects</li>
+                        <li class="fragment">aka Download Readme and check size</li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+
+		<script src="reveal.js/dist/reveal.js"></script>
+		<script src="reveal.js/plugin/notes/notes.js"></script>
+		<script src="reveal.js/plugin/markdown/markdown.js"></script>
+		<script src="reveal.js/plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>
