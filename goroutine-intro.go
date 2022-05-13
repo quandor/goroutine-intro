@@ -8,6 +8,20 @@ import (
     "sync"
 )
 
+func main() {
+    arguments := os.Args[1:]
+    if (len(arguments) == 0) {
+        return
+    }
+
+    isConcurrent := arguments[0] == "--concurrent"
+    
+    if(isConcurrent) {
+        printRepoStatsGoRoutine(arguments[1:])
+    } else {
+        printRepoStats(arguments)
+    }
+}
 
 func checkRepoFor(repoName string, branchName string, format *format) *readmeStats {
     repoUrl := fmt.Sprintf("https://raw.githubusercontent.com/NovatecConsulting/%v/%v/README.%v", repoName, branchName, format.fileEnding)
@@ -70,25 +84,15 @@ func determineQuality(stats readmeStats) string {
     }
 }
 
-
-func main() {
-    arguments := os.Args[1:]
-    if (len(arguments) == 0) {
-        return
-    }
-
-    isConcurrent := arguments[0] == "--concurrent"
-    
-    var repoNames []string
-    var wg sync.WaitGroup
-    if(isConcurrent) {
-        repoNames = arguments[1:]
-    } else {
-        repoNames = arguments
-    }
-
+func printRepoStats(repoNames []string) {
     for _, repoName := range repoNames {
-        if(isConcurrent) {
+        printRepoStat(repoName)
+    }
+}
+
+func printRepoStatsGoRoutine(repoNames []string) {
+    var wg sync.WaitGroup
+    for _, repoName := range repoNames {
             wg.Add(1)
             // new variable necessary. otherwise we just print the stat
             // for the first repo
@@ -97,14 +101,9 @@ func main() {
                 defer wg.Done()
                 printRepoStat(repoName)
             } ()
-        } else {
-            printRepoStat(repoName)
-        }
     }
 
-    if(isConcurrent) {
-        wg.Wait()
-    }
+    wg.Wait()
 }
 
 type readmeStats struct {
