@@ -34,7 +34,7 @@
                     <h2>Why goroutines?</h2>
                     <ul>
                         <li>Concurrency for the go eco system</li>
-                        <li>Easy for Developer to</li>
+                        <li>Easy for Developer to use</li>
                         <li>Solve C10K problem</li>
                     </ul>   
                 </section>
@@ -72,7 +72,7 @@
                 </section>
 
                 <section>
-                    <h2>Sample for Tickers<</h2>
+                    <h2>Sample for Tickers</h2>
                 </section>
 
                 <section>
@@ -96,10 +96,51 @@
                 <section>
                     <h2>How do goroutines communicate?</h2>
                     <ul>
-                        <li>Wait-/ErrGroups (we will have an example for that)</li>
-                        <li>Select</li>
                         <li>Channels</li>
+                        <li>Select</li>
+                        <li>Wait-/ErrGroups (we will have an example for that)</li>
                     </ul>
+                </section>
+
+                <section>
+                    <h2>Channels</h2>
+                    <p>A Channel is structure that enables communication
+                    between two different goroutines.
+                    </p>
+                    <pre class="fragment"><code data-trim>
+                        func main() {
+                            // declare channel
+                            messages := make(chan string)
+                            // send something to the channel
+                            go func() { messages <- "ping" }()
+                            // read something from the channel
+                            msg := <-messages
+                            fmt.Println(msg)
+                        }
+                   </code></pre>
+                </section>
+                <section>
+                    <h2>Channels continued</h2>
+                        <ul>
+                            <li>Block by default until both sender and receiver
+                            are ready</li>
+                            <li>You can make a channel buffering<pre>
+                                <code data-trim>
+                                     messages := make(chan string, 2)
+                                </code></pre>
+                            </li>
+                            <li>Allows writes without corresponding reads</li>
+                        </ul>
+                </section>
+
+                <section>
+                    <h2>Channel directions</h2>
+                        <pre><code data-trim>
+                            func pong(pings <-chan string, pongs chan<- string) {
+                                msg := <-pings
+                                pongs <- msg
+                            }
+                        </code></pre>
                 </section>
 
                 <section>
