@@ -24,18 +24,20 @@
                     <ul>
                         <li class="fragment">Rationale</li>
                         <li class="fragment">Syntax</li>
-                        <li class="fragment">Usecases</li>
-                        <li class="fragment">Sample code</li>
+                        <li class="fragment">Goroutines in action</li>
                         <li class="fragment">Comparision with Kotlin's coroutines</li>
+                        <li class="fragment">Resources</li>
                     </ul>
                 </section>
 
                 <section> 
                     <h2>Why goroutines?</h2>
                     <ul>
-                        <li>Concurrency for the go eco system</li>
-                        <li>Easy for Developer to use</li>
                         <li>Solve C10K problem</li>
+                        <li>Concurrency for the go eco system</li>
+                        <li>Easy for developer to use</li>
+                        <li>lightweight in contrast to OS threads</li>
+                        <li>Based on <em>continuations</em> from 1960s</li>
                     </ul>   
                 </section>
 
@@ -57,25 +59,6 @@
                 </section>
 
                 <section>
-                    <h2>Usecases Go standard library</h2>
-                    <ul>
-                        <li class="fragment">Timers (an action once in the
-                            future)</li>
-                        <li class="fragment">Tickers (action repeated at an
-                            regular interval)</li>
-                        <li class="fragment">Asynchronous code (duh!)</li>
-                    </ul>
-                </section>
-
-                <section>
-                    <h2>Sample for Timers</h2>
-                </section>
-
-                <section>
-                    <h2>Sample for Tickers</h2>
-                </section>
-
-                <section>
                     <h2>Any limitations?</h2>
                     <ul>
                         <li class="fragment">Upper limit for parallel number of goroutines</li>
@@ -94,12 +77,37 @@
                 </section>
 
                 <section>
-                    <h2>How do goroutines communicate?</h2>
+                    <h2>How to control goroutines?</h2>
                     <ul>
-                        <li>Channels</li>
+                        <li>Atomic counters</li>
+                        <li>Mutexes</li>
                         <li>Select</li>
+                        <li>Channels</li>
                         <li>Wait-/ErrGroups (we will have an example for that)</li>
                     </ul>
+                </section>
+
+                <section>
+                    <h2>Atomic Counters</h2>
+                </section>
+
+                <section>
+                    <h2>Mutexes</h2>
+                    <p>Used to protected shared state</p>
+                    <pre><code data-trim>
+                       mu sync.Mutex
+                       importantString := ""
+                       ...
+                       func change(newValue string) {
+                           mu.Lock()
+                           defer mu.Unlock()
+                           importantString = newValue
+                       }
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>Select</h2>
                 </section>
 
                 <section>
@@ -142,13 +150,38 @@
                             }
                         </code></pre>
                 </section>
-
                 <section>
-                    <h2>WaitGroup sample</h2>
+                    <h2>WaitGroup/Channel sample</h2>
                     <ul>
                         <li>Analyze quality of Novatec's documentation of its
                         GitHub projects</li>
                         <li class="fragment">aka Download Readme and check size</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Goroutines vs coroutines</h2>
+                    <ul>
+                        <li class="fragment">Share common concepts</li>
+                        <li class="fragment">Lower level abstraction as coroutines</li>
+                        <li class="fragment">Missing structured concurrency</li>
+                        <li class="fragment"><code>async</code> is a simple way to return values from a coroutine</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Resources</h2>
+                    <ul>
+                        <li><a
+                            href="https://riteeksrivastava.medium.com/a-complete-journey-with-goroutines-8472630c7f5c">A
+                            complete journey with Goroutines</a></li>
+                        <li><a
+                                href="https://dave.cheney.net/2015/08/08/performance-without-the-event-loop">Technical
+                                details of goroutines</a></li>
+                        <li><a href="https://gobyexample.com/">https://gobyexample.com</a></li>
+                        <li><a
+                                href="https://www.youtube.com/watch?v=oV9rvDllKEg">Basic
+                                concepts: Concurrency is not Parallelism by</a></li>
                     </ul>
                 </section>
             </div>
