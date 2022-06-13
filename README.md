@@ -1,29 +1,19 @@
-# Analyzes
-* Check for README.md, readme.md, README.adoc, readme.adoc
-* Report reponame, readme file format, readme size
+# Goroutine intro
+This repository exists to 
+* keep the presentation about a goroutine intro
+* be a home to the sample code
 
-# Talk
-## goroutines What are they used for?
-* concurrency made easy
-* Lightweight threading
-* Ever made yourself something with plain Threads? Don't :-)
-## What does that look like?
-* simple programm calling a goroutine
-* May a goroutine return something?
-## How can you communicate with the rest?
-* Channels
-* Select
-* Timers, Tickers
-## Sublte Problems
-http://www.sarathlakshman.com/2016/06/15/pitfall-of-golang-scheduler
-## Differences to coroutines
-* Structered concurrency??
-* there is no launch and async in go. there is just a launch
-## Summary
-* Looks easy, but it ain't
-* Still a lot easier than standard Java mechanisms like Executors or plain
-Threads
-## Link list
-Intro: https://riteeksrivastava.medium.com/a-complete-journey-with-goroutines-8472630c7f5c
-technical details: https://dave.cheney.net/2015/08/08/performance-without-the-event-loop
-Nice examples : https://gobyexample.com
+The sample analyses Readmes of Novatec's Github projects.
+There are 3 approaches:
+* without goroutines (execute `sample.sh`)
+* goroutines synchronized by a WaitGroup (execute `sample.sh --waitgroup`)
+* goroutines synchronized via Channels (execute `sample.sh --channel`)
+
+For the ease of runtime comparision I suggest to use `time sample.sh
+[--waitgroup|--channel]`
+
+If you want to analyse additional projects simply edit `sample.sh` and append 
+the project's name to the parameter list.
+
+Please note, that just because we are using goroutines we are not necessarily
+faster.
