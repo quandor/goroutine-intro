@@ -36,7 +36,7 @@
                         <li>Solve C10K problem</li>
                         <li>Concurrency for the go eco system</li>
                         <li>Easy for developer to use</li>
-                        <li>lightweight in contrast to OS threads</li>
+                        <li>Lightweight in contrast to OS threads</li>
                         <li>Based on <em>continuations</em> from 1960s</li>
                     </ul>   
                 </section>
@@ -81,14 +81,22 @@
                     <ul>
                         <li>Atomic counters</li>
                         <li>Mutexes</li>
-                        <li>Select</li>
                         <li>Channels</li>
+                        <li>Select</li>
                         <li>Wait-/ErrGroups (we will have an example for that)</li>
                     </ul>
                 </section>
 
                 <section>
                     <h2>Atomic Counters</h2>
+                    <pre><code data-trim>
+                      // add value atomically
+                      var counter uint64  
+                      atomic.AddUint64(&counter, 1)
+
+                      // read value atomically
+                      readCounter := atomic.LoadUint64(&counter)
+                    </code></pre>
                 </section>
 
                 <section>
@@ -104,10 +112,6 @@
                            importantString = newValue
                        }
                     </code></pre>
-                </section>
-
-                <section>
-                    <h2>Select</h2>
                 </section>
 
                 <section>
@@ -134,7 +138,7 @@
                             are ready</li>
                             <li>You can make a channel buffering<pre>
                                 <code data-trim>
-                                     messages := make(chan string, 2)
+                                     messages := make(chan string, 
                                 </code></pre>
                             </li>
                             <li>Allows writes without corresponding reads</li>
@@ -150,6 +154,28 @@
                             }
                         </code></pre>
                 </section>
+                <section>
+                    <h2>Select</h2>
+                    <pre><code data-trim>
+                    func doWork(c1: <-chan string, c2: <-chan string) {
+                        go func() {
+                            c1 <- "one"
+                        }()
+                        go func() {
+                            c2 <- "two"
+                        }()
+                        for i := 0; i < 2; i++ {
+                            select {
+                                case msg1 := <-c1:
+                                    fmt.Println("received", msg1)
+                                case msg2 := <-c2:
+                                    fmt.Println("received", msg2)
+                            }
+                        }
+                    }
+                    </code></pre>
+                </section>
+
                 <section>
                     <h2>WaitGroup/Channel sample</h2>
                     <ul>
@@ -170,18 +196,28 @@
                 </section>
 
                 <section>
+                    <h2>Summary</h2>
+                    <ul>
+                        <li class="fragment">Looks easy, but it ain't</li>
+                        <li class="fragment">It is still pretty low level</li>
+                        <li class="fragment">Beware: We haven't touched error
+                            handling</li>
+                        <li class="fragment">Beware: I have no battle proof
+                            experience</li>
+                    </ul>
+                </section>
+
+                <section>
                     <h2>Resources</h2>
                     <ul>
-                        <li><a
-                            href="https://riteeksrivastava.medium.com/a-complete-journey-with-goroutines-8472630c7f5c">A
+                        <li>Basic concepts (not go specific): <a href="https://www.youtube.com/watch?v=oV9rvDllKEg">
+                                Concurrency is not Parallelism by Rob Pike</a></li>
+                        <li>Detailed walkthrough of a goroutine: <a href="https://riteeksrivastava.medium.com/a-complete-journey-with-goroutines-8472630c7f5c">A
                             complete journey with Goroutines</a></li>
-                        <li><a
-                                href="https://dave.cheney.net/2015/08/08/performance-without-the-event-loop">Technical
+                        <li>Why Go?: <a href="https://dave.cheney.net/2015/08/08/performance-without-the-event-loop">Technical
                                 details of goroutines</a></li>
-                        <li><a href="https://gobyexample.com/">https://gobyexample.com</a></li>
-                        <li><a
-                                href="https://www.youtube.com/watch?v=oV9rvDllKEg">Basic
-                                concepts: Concurrency is not Parallelism by</a></li>
+                        <li>Code samples: <a href="https://gobyexample.com/">https://gobyexample.com</a></li>
+                        <li>Standard library: <a href="https://pkg.go.dev/std">Go standard library</a></li>
                     </ul>
                 </section>
             </div>
