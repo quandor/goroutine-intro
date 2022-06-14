@@ -34,19 +34,19 @@ func printRepoStatsWaitGroup(repoNames []string) {
 func printRepoStatsChannel(repoNames []string) {
 	stats := make(chan readmeStats, 2)
 
-    go func() {
-	    var wg sync.WaitGroup
+	go func() {
+		var wg sync.WaitGroup
 		for _, repoName := range repoNames {
-		    wg.Add(1)
-            go func(repoName string) {
-			    defer wg.Done()
-    			fmt.Println("Checking repository named", repoName)
-	    		stat := getRepoStats(repoName)
-		    	stats <- stat
-            }(repoName)
+			wg.Add(1)
+			go func(repoName string) {
+				defer wg.Done()
+				fmt.Println("Checking repository named", repoName)
+				stat := getRepoStats(repoName)
+				stats <- stat
+			}(repoName)
 		}
 
-	    wg.Wait()
+		wg.Wait()
 		close(stats)
 	}()
 
