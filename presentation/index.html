@@ -33,7 +33,7 @@
                 <section> 
                     <h2>Why goroutines?</h2>
                     <ul>
-                        <li>Solve C10K problem</li>
+                        <li>Solve C10M problem</li>
                         <li>Concurrency for the go eco system</li>
                         <li>Easy for developer to use</li>
                         <li>Lightweight in contrast to OS threads</li>
@@ -43,8 +43,7 @@
 
                 <section> 
                     <h2>What does that look like?</h2>
-                    <p>You call a regular function, but prepend a
-                    <code>go</code>
+                    <p>You call a regular function, but prepend <code>go</code>
                     </p> 
                     <pre class="fragment"><code data-trim>
                          func f(s string){
@@ -81,7 +80,7 @@
                     <ul>
                         <li>Atomic counters</li>
                         <li>Mutexes</li>
-                        <li>Channels</li>
+                        <li>Channels (we will have an example for that)</li>
                         <li>Select</li>
                         <li>Wait-/ErrGroups (we will have an example for that)</li>
                     </ul>
