@@ -136,12 +136,12 @@
                         <ul>
                             <li>Block by default until both sender and receiver
                             are ready</li>
-                            <li>You can make a channel buffering<pre>
+                            <li class="fragment">Buffered channels do not block
+                                on write access<pre>
                                 <code data-trim>
-                                     messages := make(chan string, 
+                                     messages := make(chan string, 3)
                                 </code></pre>
                             </li>
-                            <li>Allows writes without corresponding reads</li>
                         </ul>
                 </section>
 
