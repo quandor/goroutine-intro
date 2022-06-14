@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io"
+	"math/rand"
 	"net/http"
 	"os"
 	"sync"
@@ -97,8 +98,7 @@ func checkRepoFor(repoName string, branchName string, format *format) *readmeSta
 }
 
 func getRepoStats(repoName string) readmeStats {
-	//time.Sleep(time.Second)
-	time.Sleep(0)
+	delayRandomly()
 	markdown := format{"markdown", "md"}
 	asciidoc := format{"asciidoc", "adoc"}
 	formats := [2]format{markdown, asciidoc}
@@ -111,6 +111,14 @@ func getRepoStats(repoName string) readmeStats {
 		}
 	}
 	return readmeStats{repoName, "", 0, ""}
+}
+
+func delayRandomly() {
+	rand.Seed(time.Now().UnixNano())
+	//randomDelay, _ := time.ParseDuration(fmt.Sprintf("%vms", rand.Intn(600 -10) + 10))
+	randomDelay, _ := time.ParseDuration("0ms")
+	fmt.Println("We will delay by", randomDelay)
+	time.Sleep(randomDelay)
 }
 
 func printRepoStat(repoName string) {
