@@ -15,7 +15,7 @@ func printRepoStats(repoNames []string) {
 	}
 }
 
-func printRepoStatsGoRoutine(repoNames []string) {
+func printRepoStatsWaitGroup(repoNames []string) {
 	var wg sync.WaitGroup
 	for _, repoName := range repoNames {
 		wg.Add(1)
@@ -32,35 +32,27 @@ func printRepoStatsGoRoutine(repoNames []string) {
 }
 
 func printRepoStatsChannel(repoNames []string) {
-	statsRequests := make(chan string)
-	statsResponses := make(chan readmeStats)
-	var wg sync.WaitGroup
+	stats := make(chan readmeStats, 2)
 
-	go func() {
-		for {
-			statsRequest := <-statsRequests
-			wg.Add(1)
-			go func() {
-				fmt.Println("Checking repository named " + statsRequest)
-				stats := getRepoStats(statsRequest)
-				statsResponses <- stats
-			}()
+    go func() {
+	    var wg sync.WaitGroup
+		for _, repoName := range repoNames {
+		    wg.Add(1)
+            go func(repoName string) {
+			    defer wg.Done()
+    			fmt.Println("Checking repository named", repoName)
+	    		stat := getRepoStats(repoName)
+		    	stats <- stat
+            }(repoName)
 		}
+
+	    wg.Wait()
+		close(stats)
 	}()
 
-	go func() {
-		for {
-			stats := <-statsResponses
-			defer wg.Done()
-			fmt.Printf("Quality for %v is %v\n", stats.name, determineQuality(stats))
-		}
-	}()
-
-	for _, repoName := range repoNames {
-		statsRequests <- repoName
+	for stat := range stats {
+		fmt.Printf("Quality for %v is %v\n", stat.name, determineQuality(stat))
 	}
-
-	wg.Wait()
 }
 
 func main() {
@@ -73,7 +65,7 @@ func main() {
 	useChannel := arguments[0] == "--channel"
 
 	if useWaitGroup {
-		printRepoStatsGoRoutine(arguments[1:])
+		printRepoStatsWaitGroup(arguments[1:])
 	} else if useChannel {
 		printRepoStatsChannel(arguments[1:])
 	} else {
